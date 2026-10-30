@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Picture-first operator manual for the thawing room: panel buttons, stage lights, starting, stopping, the web page and supervisor tools.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Thawing Room Manual</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: fixed left index + one reading column, same family as the FFA manual. Pictures first, short lines second. */
+:root {
+  --bg: #f2f5f7;
+  --paper: #ffffff;
+  --ink: #12232e;
+  --muted: #55656f;
+  --line: #d6dee3;
+  --accent: #0b6bcb;          /* the controller's own UI blue */
+  --accent-ink: #ffffff;
+  --signal: #d9531e;          /* warnings and "don't" */
+  --ok: #23854a;
+  --stop: #c0392b;
+  --wait: #b77800;
+  --cold: #3d8fd6;
+  --tip-bg: #e7f0fa;
+  --warn-bg: #fcece4;
+  --ok-bg: #e5f3ea;
+  --panel: #2a3842;           /* the cabinet door in the drawings */
+  --panel-edge: #1a252d;
+  --lamp-off: #4a5964;
+  --lamp-on: #ffcf4a;
+  --side: #0f2433;
+  --side-fg: #c9d6de;
+  --side-hi: #ffffff;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --side-w: 280px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1820; --paper: #13222c; --ink: #e3eaef; --muted: #9aabb6; --line: #263a47;
+  --accent: #6aa8ea; --accent-ink: #08131b; --signal: #f08a5d; --ok: #5cc184; --stop: #ef6b5c; --wait: #e6ac3c; --cold: #7ab6ec;
+  --tip-bg: #15304a; --warn-bg: #3a2218; --ok-bg: #13321f; --panel: #23313a; --panel-edge: #0a1218; --lamp-off: #3c4a54;
+  --side: #08131b; --side-fg: #9fb3c0; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d1820; --paper: #13222c; --ink: #e3eaef; --muted: #9aabb6; --line: #263a47;
+  --accent: #6aa8ea; --accent-ink: #08131b; --signal: #f08a5d; --ok: #5cc184; --stop: #ef6b5c; --wait: #e6ac3c; --cold: #7ab6ec;
+  --tip-bg: #15304a; --warn-bg: #3a2218; --ok-bg: #13321f; --panel: #23313a; --panel-edge: #0a1218; --lamp-off: #3c4a54;
+  --side: #08131b; --side-fg: #9fb3c0; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ---------- side index ---------- */
+.side {
+  position: fixed; inset: 0 auto 0 0; width: var(--side-w); background: var(--side); color: var(--side-fg); z-index: 20;
+  padding: calc(22px + env(safe-area-inset-top, 0px)) 0 calc(22px + env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
+  overflow-y: auto; display: flex; flex-direction: column; gap: 18px;
+}
+.brand { padding: 0 22px; display: grid; gap: 2px; }
+.brand b { font: 700 28px/1 var(--display); letter-spacing: .02em; color: var(--side-hi); text-transform: uppercase; }
+.brand span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.side nav { display: grid; gap: 14px; }
+.side h4 { margin: 0; padding: 0 22px; font: 600 12px/1.2 var(--body); letter-spacing: .12em; text-transform: uppercase; color: #7f96a5; }
+.side ol { list-style: none; margin: 4px 0 0; padding: 0; }
+.side li a { display: grid; grid-template-columns: 26px 1fr; gap: 6px; align-items: baseline; padding: 6px 22px; color: inherit; text-decoration: none; font-size: 15px; line-height: 1.3; border-left: 3px solid transparent; }
+.side li a .n { font: 600 13px var(--mono); color: #6f8797; }
+.side li a:hover { color: var(--side-hi); background: rgba(255,255,255,.04); }
+.side li a.on { color: var(--side-hi); border-left-color: #6aa8ea; background: rgba(106,168,234,.12); }
+.side li a.on .n { color: #6aa8ea; }
+.side li a:focus-visible { outline: 2px solid #6aa8ea; outline-offset: -2px; }
+.side .sup a .n { color: #d98b62; }
+.side .foot { margin-top: auto; padding: 0 22px; font-size: 12px; color: #6f8797; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.search { margin: 0 16px; }
+.search input { width: 100%; font: 500 15px var(--body); color: var(--side-hi); background: rgba(255,255,255,.07); border: 1px solid #2f4757; border-radius: 8px; padding: 10px 12px; outline: none; }
+.search input::placeholder { color: #7f96a5; }
+.search input:focus { border-color: #6aa8ea; background: rgba(255,255,255,.1); }
+.results { display: grid; gap: 2px; padding: 0 8px; }
+.results .count { padding: 0 16px 6px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: #7f96a5; }
+.results a { display: grid; gap: 2px; padding: 8px 12px; border-radius: 6px; color: var(--side-fg); text-decoration: none; border-left: 3px solid transparent; }
+.results a:hover, .results a:focus-visible { background: rgba(106,168,234,.14); color: var(--side-hi); border-left-color: #6aa8ea; outline: none; }
+.results .what { font-weight: 600; font-size: 14.5px; color: var(--side-hi); }
+.results .snip { font-size: 13px; line-height: 1.4; color: #93a9b7; }
+.results mark { background: rgba(240,180,60,.3); color: inherit; border-radius: 2px; }
+.results .none { padding: 8px 16px; font-size: 14px; }
+.side.searching nav { display: none; }
+.hit { animation: hit 2.2s ease-out; border-radius: 10px; }
+@keyframes hit { 0%, 35% { box-shadow: 0 0 0 4px var(--signal); } 100% { box-shadow: 0 0 0 4px transparent; } }
+
+.topbar { display: none; }
+main { margin-left: var(--side-w); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 96px; }
+.col { max-width: 940px; margin: 0 auto; display: grid; gap: 80px; }
+section { display: grid; gap: 22px; min-width: 0; }
+@media (max-width: 960px) {
+  .side { transform: translateX(-100%); transition: transform .2s ease; width: min(86vw, 320px); }
+  body.menu .side { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.45); }
+  .topbar { display: flex; align-items: center; gap: 12px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--side); color: var(--side-hi);
+    padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--side); }
+  .topbar b { font: 700 20px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+  .topbar button { background: none; border: 1px solid #3a5262; color: inherit; border-radius: 6px; padding: 7px 12px; font: 600 15px var(--body); cursor: pointer; }
+  .topbar .sbtn { margin-left: auto; }
+  main { margin-left: 0; padding-block: 24px 72px; }
+  .col { gap: 64px; }
+}
+
+/* ---------- type ---------- */
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(42px, 6.5vw, 70px); line-height: .95; font-weight: 700; text-transform: uppercase; }
+h2 { font-size: clamp(32px, 4.4vw, 44px); line-height: 1.02; font-weight: 700; text-transform: uppercase; display: flex; gap: 14px; align-items: baseline; }
+h2 .n { font: 600 18px var(--mono); color: var(--accent); }
+h3 { font-size: 25px; font-weight: 600; line-height: 1.15; }
+p, ul, ol { margin: 0; max-width: 64ch; }
+.lede { font-size: 19px; color: var(--muted); }
+.big { font-size: 20px; font-weight: 500; }
+a { color: var(--accent); }
+.eyebrow { font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.k { font: 700 .84em var(--display); letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; padding: 1px 9px 0; border-radius: 999px; border: 2px solid currentColor; line-height: 1.4; white-space: nowrap; vertical-align: 1px; }
+.k.go { color: var(--ok); } .k.later { color: var(--accent); } .k.halt { color: var(--stop); }
+.web { font: 600 .9em var(--body); display: inline-block; padding: 0 8px; border-radius: 6px; background: var(--tip-bg); color: var(--accent); white-space: nowrap; }
+svg.i { width: 1em; height: 1em; flex: none; }
+
+/* ---------- hero ---------- */
+.hero { display: grid; gap: 18px; }
+.cycle { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.cycle a { position: relative; display: grid; gap: 8px; justify-items: center; text-align: center; padding: 18px 10px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; }
+.cycle a:hover { border-color: var(--accent); }
+.cycle a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.cycle a:not(:last-child)::after { content: ""; position: absolute; right: -9px; top: 50%; width: 10px; height: 10px; border-top: 2px solid var(--muted); border-right: 2px solid var(--muted); transform: translate(0, -50%) rotate(45deg); z-index: 1; background: var(--bg); }
+.cycle svg { width: 46px; height: 46px; }
+.cycle b { font: 700 21px/1 var(--display); text-transform: uppercase; }
+.cycle span { font-size: 13.5px; color: var(--muted); line-height: 1.3; }
+@media (max-width: 720px) { .cycle { grid-template-columns: 1fr; } .cycle a { grid-template-columns: 52px 1fr; justify-items: start; text-align: left; align-items: center; } .cycle a svg { grid-row: span 2; } .cycle a:not(:last-child)::after { right: auto; left: 34px; top: auto; bottom: -9px; transform: rotate(135deg); } }
+
+/* ---------- the panel drawing ---------- */
+.panelwrap { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 28px; align-items: center; }
+@media (max-width: 760px) { .panelwrap { grid-template-columns: 1fr; } }
+.panel { width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto; }
+.panel .door { fill: var(--panel); stroke: var(--panel-edge); stroke-width: 4; }
+.panel .plate { fill: rgba(255,255,255,.07); }
+.panel text { font-family: var(--display); font-weight: 700; fill: #e9eef1; letter-spacing: .04em; }
+.panel .lab { font-size: 15px; }
+.panel .num { font-size: 20px; fill: #1a252d; }
+.lamp circle.glass { fill: var(--lamp-off); stroke: #11191f; stroke-width: 3; transition: fill .15s; }
+.lamp circle.halo { fill: var(--lamp-on); opacity: 0; transition: opacity .15s; }
+.lamp text.num { fill: #9aa7b0; }
+.lamp.on circle.glass { fill: var(--lamp-on); }
+.lamp.on circle.halo { opacity: .28; }
+.lamp.on text.num { fill: #5a4300; }
+.lamp.blink circle.glass { animation: lampglass 1s steps(1, end) infinite; }
+.lamp.blink circle.halo { animation: lamphalo 1s steps(1, end) infinite; }
+.lamp.blink text.num { animation: lampnum 1s steps(1, end) infinite; }
+@keyframes lampglass { 0% { fill: var(--lamp-on); } 50% { fill: var(--lamp-off); } }
+@keyframes lamphalo { 0% { opacity: .28; } 50% { opacity: 0; } }
+@keyframes lampnum { 0% { fill: #5a4300; } 50% { fill: #9aa7b0; } }
+.btncap { stroke: #0c1317; stroke-width: 3; }
+.btncap.go { fill: #2d9a57; } .btncap.later { fill: #2f7fd0; } .btncap.halt { fill: #cf3b2c; }
+.btnring { fill: #12191e; }
+.btnicon { fill: #ffffff; }
+.panel .press { cursor: pointer; }
+.panel .press:focus-visible .btnring { stroke: var(--lamp-on); stroke-width: 4; }
+
+.lights { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.lights button { display: grid; gap: 8px; justify-items: center; padding: 14px 10px 12px; background: var(--paper); border: 2px solid var(--line); border-radius: 12px; color: var(--ink); font: inherit; cursor: pointer; text-align: center; }
+.lights button:hover { border-color: var(--accent); }
+.lights button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.lights button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.lights .mini { display: flex; gap: 6px; padding: 6px 10px; background: var(--panel); border-radius: 999px; }
+.lights .mini i { width: 18px; height: 18px; border-radius: 50%; background: var(--lamp-off); border: 2px solid #11191f; }
+.lights .mini i.on { background: var(--lamp-on); box-shadow: 0 0 8px var(--lamp-on); }
+.lights .mini i.blink { animation: minib 1s steps(1, end) infinite; }
+@keyframes minib { 0% { background: var(--lamp-on); box-shadow: 0 0 8px var(--lamp-on); } 50% { background: var(--lamp-off); box-shadow: none; } }
+.lights b { font: 700 19px/1 var(--display); text-transform: uppercase; }
+.lights span { font-size: 13.5px; color: var(--muted); line-height: 1.3; }
+.meaning { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; padding: 16px 18px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); min-height: 92px; }
+.meaning svg { width: 44px; height: 44px; }
+.meaning b { display: block; font: 700 24px/1.05 var(--display); text-transform: uppercase; }
+.meaning span { color: var(--muted); }
+.meaning.lock { background: var(--warn-bg); border-color: transparent; }
+.meaning.lock b { color: var(--signal); }
+
+/* ---------- decision cards ---------- */
+.choose { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .choose { grid-template-columns: 1fr; } }
+.choice { display: grid; gap: 10px; align-content: start; padding: 18px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); border-top: 6px solid var(--c); }
+.choice .q { font-size: 15px; color: var(--muted); }
+.choice .q b { color: var(--ink); font-weight: 600; }
+.choice .press { display: flex; align-items: center; gap: 10px; font: 700 26px/1 var(--display); text-transform: uppercase; color: var(--c); }
+.choice .press svg { width: 38px; height: 38px; }
+.choice .then { font-size: 15px; }
+.choice.go { --c: var(--ok); } .choice.later { --c: var(--accent); } .choice.halt { --c: var(--stop); }
+
+/* ---------- stages ---------- */
+.stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .stages { grid-template-columns: 1fr; } }
+.stage { display: grid; gap: 14px; align-content: start; padding: 18px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); }
+.stage header { display: flex; align-items: center; gap: 12px; }
+.stage .badge { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 12px; font: 700 28px var(--display); color: #fff; background: var(--c); flex: none; }
+.stage h3 { font-size: 26px; text-transform: uppercase; font-weight: 700; }
+.stage h3 small { display: block; font: 500 14px var(--body); text-transform: none; color: var(--muted); }
+.stage.s1 { --c: #6d9fd0; } .stage.s2 { --c: var(--accent); } .stage.s3 { --c: var(--ok); }
+.equip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.equip div { display: grid; justify-items: center; gap: 4px; padding: 10px 4px; border-radius: 10px; background: var(--bg); font-size: 12.5px; text-align: center; line-height: 1.2; color: var(--muted); }
+.equip div svg { width: 30px; height: 30px; color: var(--muted); opacity: .45; }
+.equip div.on { background: color-mix(in srgb, var(--c) 14%, var(--paper)); color: var(--ink); font-weight: 600; }
+.equip div.on svg { color: var(--c); opacity: 1; }
+.ends { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; padding: 12px; border-radius: 10px; border: 2px dashed var(--line); font-size: 15px; }
+.ends svg { width: 30px; height: 30px; color: var(--c); }
+.ends b { font-weight: 600; }
+
+/* ---------- figures ---------- */
+figure { margin: 0; display: grid; gap: 8px; min-width: 0; }
+.shot { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); }
+.shot img { display: block; width: 100%; height: auto; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.pin { position: absolute; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; background: var(--signal); color: #fff; font: 700 15px/30px var(--mono); text-align: center; box-shadow: 0 0 0 3px rgba(255,255,255,.9), 0 2px 6px rgba(0,0,0,.35); }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 24px; list-style: none; padding: 0; max-width: none; }
+.legend li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; font-size: 15.5px; }
+.legend li > b:first-child { width: 28px; height: 28px; border-radius: 50%; background: var(--signal); color: #fff; font: 700 14px/28px var(--mono); text-align: center; }
+.two { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+.phone { max-width: 300px; justify-self: center; border-radius: 28px; padding: 10px; background: #0d151b; box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+.phone img { display: block; width: 100%; height: auto; border-radius: 20px; }
+
+/* ---------- steps ---------- */
+.steps { list-style: none; padding: 0; display: grid; gap: 14px; max-width: none; counter-reset: st; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 46px 1fr; gap: 14px; align-items: start; }
+.steps > li::before { content: counter(st); width: 42px; height: 42px; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font: 700 22px/42px var(--display); text-align: center; }
+.steps > li > div { display: grid; gap: 3px; min-width: 0; padding-top: 2px; }
+.steps b.t { font-weight: 600; font-size: 18px; }
+.steps span { color: var(--muted); }
+
+/* ---------- callouts ---------- */
+.note { border-radius: 10px; padding: 14px 16px; display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; font-size: 16px; max-width: 76ch; }
+.note::before { font: 700 13px var(--body); letter-spacing: .08em; text-transform: uppercase; padding-top: 2px; }
+.note.tip { background: var(--tip-bg); } .note.tip::before { content: "Tip"; color: var(--accent); }
+.note.warn { background: var(--warn-bg); } .note.warn::before { content: "Don't"; color: var(--signal); }
+.note.info { background: var(--paper); border: 1px solid var(--line); } .note.info::before { content: "Why"; color: var(--muted); }
+
+/* ---------- outcome cards ---------- */
+.outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px) { .outcomes { grid-template-columns: 1fr; } }
+.outcome { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; padding: 18px; border-radius: 14px; }
+.outcome svg { width: 46px; height: 46px; }
+.outcome b { display: block; font: 700 24px/1.05 var(--display); text-transform: uppercase; margin-bottom: 4px; }
+.outcome.fin { background: var(--ok-bg); } .outcome.fin svg, .outcome.fin b { color: var(--ok); }
+.outcome.early { background: var(--warn-bg); } .outcome.early svg, .outcome.early b { color: var(--signal); }
+
+/* ---------- flipbook ---------- */
+.flip { display: grid; gap: 10px; }
+.flip .stage-img { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); aspect-ratio: 1600 / 1105; max-width: 100%; }
+.flip .stage-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: top; opacity: 0; transition: opacity .3s ease; }
+.flip .stage-img img.on { opacity: 1; }
+.flip .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.flip button { font: 600 15px var(--body); border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 8px; padding: 8px 14px; cursor: pointer; min-height: 44px; }
+.flip button:hover { border-color: var(--accent); }
+.flip button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.flip .dots { display: flex; gap: 6px; }
+.flip .dots span { width: 24px; height: 6px; border-radius: 3px; background: var(--line); }
+.flip .dots span.on { background: var(--accent); }
+.flip .cap { font-size: 16px; min-height: 2.6em; }
+.flip .cap b { font: 600 14px var(--mono); color: var(--accent); margin-right: 6px; }
+
+/* ---------- origins ---------- */
+.origins { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.origins div { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); }
+.origins svg { width: 30px; height: 30px; color: var(--accent); }
+.origins b { display: block; font: 700 19px/1 var(--display); text-transform: uppercase; }
+.origins span { font-size: 13.5px; color: var(--muted); line-height: 1.3; }
+.origins .robot svg { color: var(--muted); }
+
+/* ---------- trouble ---------- */
+.trouble { display: grid; gap: 12px; }
+.tcard { display: grid; grid-template-columns: 92px 1fr; gap: 16px; align-items: start; padding: 16px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); }
+.tcard .pic { display: grid; place-items: center; height: 72px; border-radius: 12px; background: var(--bg); }
+.tcard .pic svg { width: 44px; height: 44px; }
+.tcard .pic .mini { display: flex; gap: 4px; padding: 5px 8px; background: var(--panel); border-radius: 999px; }
+.tcard .pic .mini i { width: 14px; height: 14px; border-radius: 50%; background: var(--lamp-off); border: 2px solid #11191f; }
+.tcard .pic .mini i.blink { animation: minib 1s steps(1, end) infinite; }
+.tcard h3 { font-size: 23px; }
+.tcard .do { display: grid; gap: 4px; margin-top: 6px; }
+.tcard .do div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+.tcard .do div svg { width: 20px; height: 20px; margin-top: 3px; color: var(--ok); }
+.tcard .do div.call svg { color: var(--signal); }
+@media (max-width: 560px) { .tcard { grid-template-columns: 1fr; } .tcard .pic { width: 92px; } }
+
+/* ---------- tables ---------- */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 12px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td code, p code { font: 600 .9em var(--mono); background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+
+/* ---------- cheat sheet ---------- */
+.sheet { background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 22px; display: grid; gap: 18px; }
+.sheet header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: baseline; border-bottom: 3px solid var(--ink); padding-bottom: 10px; }
+.sheet header b { font: 700 30px var(--display); text-transform: uppercase; }
+.sheet .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 26px; }
+.sheet h5 { margin: 0 0 8px; font: 600 12px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.sheet .row { display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 15.5px; }
+.sheet .row:last-child { border-bottom: 0; }
+.sheet .row .mini { display: flex; gap: 4px; padding: 4px 7px; background: var(--panel); border-radius: 999px; justify-self: start; }
+.sheet .row .mini i { width: 12px; height: 12px; border-radius: 50%; background: var(--lamp-off); border: 1.5px solid #11191f; }
+.sheet .row .mini i.on { background: var(--lamp-on); }
+.sheet .row .mini i.blink { animation: minib 1s steps(1, end) infinite; }
+.sheet .blank { font: 600 15px var(--mono); border-bottom: 2px solid var(--ink); display: inline-block; min-width: 14ch; }
+
+.supbanner { display: grid; gap: 8px; padding: 22px; border-radius: 12px; background: var(--warn-bg); }
+.supbanner h2 { color: var(--signal); }
+.placeholder { border: 2px dashed var(--line); border-radius: 10px; padding: 22px; text-align: center; color: var(--muted); font-size: 15px; background: var(--paper); }
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2.5" fill="currentColor"/></symbol>
+    <symbol id="i-fan" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 10c-.5-3.5.5-7 3.5-7 2.5 0 2.5 3.5-1.5 7M14 12c3.5-.5 7 .5 7 3.5 0 2.5-3.5 2.5-7-1.5M12 14c.5 3.5-.5 7-3.5 7-2.5 0-2.5-3.5 1.5-7M10 12c-3.5.5-7-.5-7-3.5 0-2.5 3.5-2.5 7 1.5"/></g></symbol>
+    <symbol id="i-air" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 8h10a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></symbol>
+    <symbol id="i-fish" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12c3-4.5 7-6 11-6 3.5 0 5.5 2.5 6.5 6-1 3.5-3 6-6.5 6-4 0-8-1.5-11-6z"/><path d="M20 12l2-3v6z"/><circle cx="16" cy="10.5" r=".8" fill="currentColor"/></g></symbol>
+    <symbol id="i-snow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5 12 6l2.5-2.5M9.5 20.5 12 18l2.5 2.5"/></g></symbol>
+    <symbol id="i-thermo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 1 1 4 0z"/><path d="M12 17.5v-6"/></g></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></g></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="m5 12 5 5 9-10"/></symbol>
+    <symbol id="i-checkc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m7.5 12.3 3 3 6-6.6"/></g></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="m9 9 6 6M15 9l-6 6"/></g></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></g></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/></g></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></g></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></g></symbol>
+    <symbol id="i-scada" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4M6.5 12l3-3 2.5 2 4.5-4.5"/></g></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></g></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></g></symbol>
+    <symbol id="i-power" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v9"/><path d="M6.4 6.4a8 8 0 1 0 11.2 0"/></g></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.6 16a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19.3" r="1" fill="currentColor"/><path d="M3 3l18 18"/></g></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="15" rx="1.5"/><path d="M4 8h16M4 13h16"/><circle cx="8" cy="20.5" r="1.3"/><circle cx="16" cy="20.5" r="1.3"/></g></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8"/><path d="M11 12h10M18 9l3 3-3 3"/></g></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5a7 7 0 0 1 14 0"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="topbar"><button type="button" id="menuBtn" aria-controls="side" aria-expanded="false">Index</button><b>Thawing Room Manual</b><button type="button" id="searchBtn" class="sbtn">Search</button></div>
+
+<aside class="side" id="side">
+  <div class="brand"><b>Thawing Room</b><span>Operator manual</span></div>
+  <div class="search" role="search">
+    <label for="q" class="sr">Search the manual</label>
+    <input id="q" type="search" placeholder="Search the manual…" autocomplete="off" spellcheck="false" aria-controls="results">
+  </div>
+  <div class="results" id="results" hidden aria-live="polite"></div>
+  <nav aria-label="Manual index" id="toc">
+    <div>
+      <h4>Every day</h4>
+      <ol>
+        <li><a href="#panel"><span class="n">01</span>The buttons</a></li>
+        <li><a href="#lights"><span class="n">02</span>The lights</a></li>
+        <li><a href="#stages"><span class="n">03</span>The 3 stages</a></li>
+        <li><a href="#start"><span class="n">04</span>Start now</a></li>
+        <li><a href="#delayed"><span class="n">05</span>Delayed start</a></li>
+        <li><a href="#stop"><span class="n">06</span>Stop or finish</a></li>
+        <li><a href="#watch"><span class="n">07</span>Watch on a phone</a></li>
+        <li><a href="#events"><span class="n">08</span>What happened?</a></li>
+      </ol>
+    </div>
+    <div>
+      <h4>When something's off</h4>
+      <ol>
+        <li><a href="#trouble"><span class="n">09</span>Problems</a></li>
+        <li><a href="#sheet"><span class="n">10</span>Cheat sheet</a></li>
+      </ol>
+    </div>
+    <div class="sup">
+      <h4>Supervisor only</h4>
+      <ol>
+        <li><a href="#lockdown"><span class="n">11</span>Maintenance lockdown</a></li>
+        <li><a href="#calibration"><span class="n">12</span>Sensor calibration</a></li>
+        <li><a href="#settings"><span class="n">13</span>Settings &amp; restart</a></li>
+        <li><a href="#firmware"><span class="n">14</span>Firmware update</a></li>
+      </ol>
+    </div>
+  </nav>
+  <div class="foot">Screens from controller firmware v1.0.2, with example readings.</div>
+</aside>
+
+<main>
+<div class="col">
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top" data-title="Thawing Room Manual">
+  <span class="eyebrow">Sardine &amp; mackerel thawing · ZD controller</span>
+  <h1>Thawing Room Manual</h1>
+  <p class="lede">How to run one thawing cycle: start it, watch it, and stop it when the fish leaves the room.</p>
+  <nav class="cycle" aria-label="One cycle, step by step">
+    <a href="#start"><svg aria-hidden="true" style="color:var(--cold)"><use href="#i-cart"/></svg><b>Load</b><span>Frozen fish in, door closed</span></a>
+    <a href="#panel"><svg aria-hidden="true" style="color:var(--ok)"><use href="#i-play"/></svg><b>Start</b><span>START now, or D-START for later</span></a>
+    <a href="#stages"><svg aria-hidden="true" style="color:var(--accent)"><use href="#i-fan"/></svg><b>Thaw</b><span>Stage 2 runs by itself</span></a>
+    <a href="#stages"><svg aria-hidden="true" style="color:var(--ok)"><use href="#i-thermo"/></svg><b>Hold</b><span>Stage 3 keeps the fish ready</span></a>
+    <a href="#stop"><svg aria-hidden="true" style="color:var(--stop)"><use href="#i-stop"/></svg><b>Stop</b><span>Press STOP when the fish leaves</span></a>
+  </nav>
+</section>
+
+<!-- ================= 01 PANEL ================= -->
+<section id="panel" data-title="The buttons" data-k="panel button start d-start delayed stop push">
+  <h2><span class="n">01</span>The buttons</h2>
+  <p class="big">The panel has 3 buttons. Pick the one that matches what you want.</p>
+  <div class="choose">
+    <div class="choice go">
+      <span class="q"><b>Fish is in.</b> Thaw it <b>now</b>.</span>
+      <span class="press"><svg aria-hidden="true"><use href="#i-play"/></svg>START</span>
+      <span class="then">The room goes straight to <b>Stage 2</b>.</span>
+    </div>
+    <div class="choice later">
+      <span class="q"><b>Fish is in.</b> Thaw it <b>later</b>.</span>
+      <span class="press"><svg aria-hidden="true"><use href="#i-clock"/></svg>D-START</span>
+      <span class="then">The room waits in <b>Stage 1</b>, then starts Stage 2 at the set time.</span>
+    </div>
+    <div class="choice halt">
+      <span class="q"><b>Fish is leaving</b>, or something is wrong.</span>
+      <span class="press"><svg aria-hidden="true"><use href="#i-stop"/></svg>STOP</span>
+      <span class="then">Everything turns off. STOP always works.</span>
+    </div>
+  </div>
+  <div class="panelwrap">
+    <figure>
+      <svg class="panel" id="panelSvg" viewBox="0 0 340 380" role="img" aria-label="Drawing of the control panel: three stage lights on top, START, D-START and STOP buttons below">
+        <rect class="door" x="6" y="6" width="328" height="368" rx="18"/>
+        <rect class="plate" x="30" y="30" width="280" height="140" rx="12"/>
+        <text class="lab" x="170" y="56" text-anchor="middle">STAGE</text>
+        <g class="lamp" data-lamp="1"><circle class="halo" cx="90" cy="112" r="40"/><circle class="glass" cx="90" cy="112" r="26"/><text class="num" x="90" y="119" text-anchor="middle">1</text></g>
+        <g class="lamp on" data-lamp="2"><circle class="halo" cx="170" cy="112" r="40"/><circle class="glass" cx="170" cy="112" r="26"/><text class="num" x="170" y="119" text-anchor="middle">2</text></g>
+        <g class="lamp" data-lamp="3"><circle class="halo" cx="250" cy="112" r="40"/><circle class="glass" cx="250" cy="112" r="26"/><text class="num" x="250" y="119" text-anchor="middle">3</text></g>
+        <rect class="plate" x="30" y="196" width="280" height="154" rx="12"/>
+        <g><circle class="btnring" cx="90" cy="262" r="38"/><circle class="btncap go" cx="90" cy="262" r="29"/><path class="btnicon" d="M83 249v26l21-13z"/><text class="lab" x="90" y="330" text-anchor="middle">START</text></g>
+        <g><circle class="btnring" cx="170" cy="262" r="38"/><circle class="btncap later" cx="170" cy="262" r="29"/><circle cx="170" cy="262" r="13" fill="none" stroke="#fff" stroke-width="3.5"/><path d="M170 254v9l6 4" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><text class="lab" x="170" y="330" text-anchor="middle">D-START</text></g>
+        <g><circle class="btnring" cx="250" cy="262" r="38"/><circle class="btncap halt" cx="250" cy="262" r="29"/><rect class="btnicon" x="238" y="250" width="24" height="24" rx="3"/><text class="lab" x="250" y="330" text-anchor="middle">STOP</text></g>
+      </svg>
+      <figcaption>Drawing of the panel. Your cabinet can look different; the names on the buttons are the same.</figcaption>
+    </figure>
+    <div style="display:grid;gap:14px">
+      <div class="note tip"><span>The SCADA and the web page have the same three commands. A command from any of them does the same thing as the button.</span></div>
+      <div class="note warn"><span>Don't press START or D-START when a stage light is on. The room is already running. Press STOP first if you really need a new cycle.</span></div>
+      <div class="note info"><span>After a power cut the room comes back <b>in the same stage</b>. You don't need to press anything.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 LIGHTS ================= -->
+<section id="lights" data-title="The lights" data-k="lamp light blink blinking off on stage maintenance">
+  <h2><span class="n">02</span>The lights</h2>
+  <p class="big">One light on = the stage the room is in. Tap a pattern to see it on the panel.</p>
+  <div class="lights" role="group" aria-label="Light patterns">
+    <button type="button" data-p="0" aria-pressed="false"><span class="mini"><i></i><i></i><i></i></span><b>All off</b><span>Idle. Ready to start.</span></button>
+    <button type="button" data-p="1" aria-pressed="false"><span class="mini"><i class="on"></i><i></i><i></i></span><b>Light 1</b><span>Stage 1. Waiting.</span></button>
+    <button type="button" data-p="2" aria-pressed="true"><span class="mini"><i></i><i class="on"></i><i></i></span><b>Light 2</b><span>Stage 2. Thawing.</span></button>
+    <button type="button" data-p="3" aria-pressed="false"><span class="mini"><i></i><i></i><i class="on"></i></span><b>Light 3</b><span>Stage 3. Holding.</span></button>
+    <button type="button" data-p="L" aria-pressed="false"><span class="mini"><i class="blink"></i><i class="blink"></i><i class="blink"></i></span><b>All blinking</b><span>Maintenance. No start.</span></button>
+  </div>
+  <div class="meaning" id="meaning" aria-live="polite"></div>
+</section>
+
+<!-- ================= 03 STAGES ================= -->
+<section id="stages" data-title="The 3 stages" data-k="stage 1 2 3 fan air sprinkler damper hold thaw wait automatic">
+  <h2><span class="n">03</span>The 3 stages</h2>
+  <p class="big">The room moves forward by itself. Only Stage 3 needs you: press STOP at the end.</p>
+  <div class="stages">
+    <article class="stage s1">
+      <header><span class="badge">1</span><h3>Wait<small>Delayed start</small></h3></header>
+      <div class="equip"><div class="on"><svg aria-hidden="true"><use href="#i-fan"/></svg>Fans cycle</div><div><svg aria-hidden="true"><use href="#i-air"/></svg>Air off</div><div class="on"><svg aria-hidden="true"><use href="#i-drop"/></svg>Sprinkler</div></div>
+      <div class="ends"><svg aria-hidden="true"><use href="#i-clock"/></svg><span>Goes to Stage 2 <b>at the set time</b>.</span></div>
+    </article>
+    <article class="stage s2">
+      <header><span class="badge">2</span><h3>Thaw<small>Active thaw</small></h3></header>
+      <div class="equip"><div class="on"><svg aria-hidden="true"><use href="#i-fan"/></svg>Fans cycle</div><div class="on"><svg aria-hidden="true"><use href="#i-air"/></svg>Air in</div><div class="on"><svg aria-hidden="true"><use href="#i-drop"/></svg>Sprinkler</div></div>
+      <div class="ends"><svg aria-hidden="true"><use href="#i-thermo"/></svg><span>Goes to Stage 3 when <b>both</b> fish probes reach their target.</span></div>
+    </article>
+    <article class="stage s3">
+      <header><span class="badge">3</span><h3>Hold<small>Fish is ready</small></h3></header>
+      <div class="equip"><div class="on"><svg aria-hidden="true"><use href="#i-fan"/></svg>Fans cycle</div><div><svg aria-hidden="true"><use href="#i-air"/></svg>Air off</div><div class="on"><svg aria-hidden="true"><use href="#i-drop"/></svg>Sprinkler</div></div>
+      <div class="ends"><svg aria-hidden="true" style="color:var(--stop)"><use href="#i-stop"/></svg><span><b>Never ends by itself.</b> Press STOP when the fish leaves.</span></div>
+    </article>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Probe</th><th>Where it is</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Ta</b></td><td>Room air</td><td>Air control in Stage 2</td></tr>
+      <tr><td><b>Ts</b></td><td>Under a fish plate (surface)</td><td>Ending Stage 2</td></tr>
+      <tr><td><b>Tc</b></td><td>Pushed into a fish (core)</td><td>Ending Stage 2</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><span>Don't take the Tc probe out of the fish during a cycle. Stage 2 could end too early or never end.</span></div>
+  <div class="note info"><span>The fans run forward, pause, run in reverse, pause, and repeat. The sprinkler only flushes blood off the carts: it does not thaw the fish.</span></div>
+</section>
+
+<!-- ================= 04 START ================= -->
+<section id="start" data-title="Start now" data-k="start begin run now go stage 2">
+  <h2><span class="n">04</span>Start now</h2>
+  <ol class="steps">
+    <li><div><b class="t">Load the fish and close the door</b><span>Put the Tc probe into a fish. Check that the Ts probe is under a plate.</span></div></li>
+    <li><div><b class="t">Check: all lights off</b><span>If lights are blinking, the room is in maintenance. See <a href="#t-blink">Problems</a>.</span></div></li>
+    <li><div><b class="t">Press <span class="k go">Start</span></b><span>Light 2 turns on. Fans start after a 5-second safety delay.</span></div></li>
+  </ol>
+  <h3>Or from the web page</h3>
+  <div class="flip" data-flip>
+    <div class="stage-img">
+      <img src="img/dlg-start.jpg" alt="" data-cap="Press Start now. The page asks you to confirm.">
+      <img src="img/toast-start.jpg" alt="" data-cap="A message confirms it: Process started in Stage 2.">
+      <img src="img/control-run.jpg" alt="" data-cap="Stage 2 is now shown at the top of the page.">
+    </div>
+    <div class="bar"><button type="button" data-prev>◀ Back</button><button type="button" data-next>Next ▶</button><div class="dots"></div></div>
+    <p class="cap"></p>
+  </div>
+</section>
+
+<!-- ================= 05 DELAYED ================= -->
+<section id="delayed" data-title="Delayed start" data-k="delayed start d-start later schedule time date stage 1 wait">
+  <h2><span class="n">05</span>Delayed start</h2>
+  <p class="big">Use it when the fish must be ready at a set time, for example the next morning.</p>
+  <ol class="steps">
+    <li><div><b class="t">Set the Stage 2 time first</b><span>In the SCADA, or on the web page (it asks you for the time).</span></div></li>
+    <li><div><b class="t">Press <span class="k later">D-Start</span></b><span>Light 1 turns on. The room waits.</span></div></li>
+    <li><div><b class="t">At the set time, light 2 turns on by itself</b><span>Nothing to press.</span></div></li>
+  </ol>
+  <div class="two">
+    <figure>
+      <div class="shot"><img src="img/dlg-dstart.jpg" alt="Web page dialog to schedule a delayed start with date and time" loading="lazy" width="1600" height="1105"></div>
+      <figcaption>On the web page, pick the date and time. It shows when Stage 2 will start and how long until then.</figcaption>
+    </figure>
+    <div style="display:grid;gap:12px;align-content:start">
+      <div class="note warn"><span>Don't use the time on your own phone. Use the <b>room time</b>, shown at the bottom of the web page. The plant and the office can be in different time zones.</span></div>
+      <div class="note tip"><span>The time must be in the next 7 days.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 STOP ================= -->
+<section id="stop" data-title="Stop or finish" data-k="stop finish end finished early cancel">
+  <h2><span class="n">06</span>Stop or finish</h2>
+  <p class="big">It is the same STOP button. What it means depends on the stage.</p>
+  <div class="outcomes">
+    <div class="outcome fin"><svg aria-hidden="true"><use href="#i-checkc"/></svg><div><b>In Stage 3: Finished</b>This is the normal end. Press STOP when the fish leaves the room. The cycle is saved as finished.</div></div>
+    <div class="outcome early"><svg aria-hidden="true"><use href="#i-x"/></svg><div><b>In Stage 1 or 2: Stopped early</b>The cycle is saved as stopped. It can't continue: a new START begins a new cycle.</div></div>
+  </div>
+  <figure>
+    <div class="shot"><img src="img/dlg-stop.jpg" alt="Web page dialog asking to finish the process" loading="lazy" width="1600" height="1105"></div>
+    <figcaption>On the web page, the button says <b>Finish process</b> in Stage 3 and <b>Stop</b> in other stages. It always asks first.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= 07 WATCH ================= -->
+<section id="watch" data-title="Watch on a phone" data-k="web page phone browser control watch temperature fans address login">
+  <h2><span class="n">07</span>Watch on a phone</h2>
+  <p class="big">Open the room's page in any browser on the plant Wi-Fi: <span class="web">http://<i>room address</i>/control</span></p>
+  <figure>
+    <div class="shot">
+      <img src="img/control-run.jpg" alt="Control page of the thawing room with stage, temperatures and equipment" loading="lazy" width="1600" height="1716">
+      <span class="pin" style="left:83.9%;top:3.5%">1</span>
+      <span class="pin" style="left:23.2%;top:11.9%">2</span>
+      <span class="pin" style="left:25.2%;top:25.2%">3</span>
+      <span class="pin" style="left:25.2%;top:30.7%">4</span>
+      <span class="pin" style="left:23.2%;top:41.3%">5</span>
+      <span class="pin" style="left:61.2%;top:41.3%">6</span>
+      <span class="pin" style="left:23.2%;top:72.6%">7</span>
+      <span class="pin" style="left:22.1%;top:89.3%">8</span>
+    </div>
+  </figure>
+  <ul class="legend">
+    <li><b>1</b><span><b>Now</b>: stage and cycle number.</span></li>
+    <li><b>2</b><span><b>Stage</b> and how long it has been running.</span></li>
+    <li><b>3</b><span><b>What Stage 2 waits for.</b> ✕ not yet, ✓ reached.</span></li>
+    <li><b>4</b><span><b>Start now · Delayed start · Stop.</b> Grey = not possible now.</span></li>
+    <li><b>5</b><span><b>Temperatures</b> Ta, Ts, Tc. Red number = probe problem.</span></li>
+    <li><b>6</b><span><b>Equipment</b>: fan direction, air %, damper, sprinkler.</span></li>
+    <li><b>7</b><span><b>Connection</b> to the SCADA, clock, SD card.</span></li>
+    <li><b>8</b><span><b>Recent activity</b>: last things that happened.</span></li>
+  </ul>
+  <div class="two">
+    <div style="display:grid;gap:12px;align-content:start">
+      <div class="note tip"><span>The page updates by itself every 2 seconds. No need to refresh.</span></div>
+      <div class="note info"><span>Each room has its own address and needs a user name and password. Ask your supervisor and write them on the <a href="#sheet">cheat sheet</a>.</span></div>
+    </div>
+    <div class="phone"><img src="img/phone-control.jpg" alt="The control page on a phone" loading="lazy" width="780" height="1688"></div>
+  </div>
+</section>
+
+<!-- ================= 08 EVENTS ================= -->
+<section id="events" data-title="What happened?" data-k="events log history who when manual remote web auto system cycle">
+  <h2><span class="n">08</span>What happened?</h2>
+  <p class="big">The <b>Events</b> page keeps every start, stage change and stop, with the time and who did it.</p>
+  <div class="origins">
+    <div><svg aria-hidden="true"><use href="#i-hand"/></svg><p><b>Manual</b><span>A button on the panel</span></p></div>
+    <div><svg aria-hidden="true"><use href="#i-scada"/></svg><p><b>Remote</b><span>The SCADA</span></p></div>
+    <div><svg aria-hidden="true"><use href="#i-globe"/></svg><p><b>Web</b><span>The web page</span></p></div>
+    <div class="robot"><svg aria-hidden="true"><use href="#i-auto"/></svg><p><b>Auto</b><span>The room decided (time or temperature)</span></p></div>
+    <div class="robot"><svg aria-hidden="true"><use href="#i-power"/></svg><p><b>System</b><span>Start-up or self-check</span></p></div>
+  </div>
+  <figure>
+    <div class="shot"><img src="img/events.jpg" alt="Events page with the process cycle bar and the list of events" loading="lazy" width="1600" height="1600"></div>
+    <figcaption>Top: the cycle as a bar, one color per stage. Below: every event, newest first. Filter by type or search.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= 09 TROUBLE ================= -->
+<section id="trouble" data-title="Problems" data-k="problem trouble help fix error not working">
+  <h2><span class="n">09</span>Problems</h2>
+  <div class="trouble">
+    <article class="tcard" id="t-blink" data-title="All 3 lights blinking" data-k="blinking lights maintenance lockdown start does nothing">
+      <div class="pic"><span class="mini"><i class="blink"></i><i class="blink"></i><i class="blink"></i></span></div>
+      <div><h3>All 3 lights blinking</h3>
+        <p>Someone is fixing the room. START and D-START do nothing.</p>
+        <div class="do"><div class="call"><svg aria-hidden="true"><use href="#i-person"/></svg><span>Ask the supervisor if the work is done. Only they can end it.</span></div></div>
+      </div>
+    </article>
+    <article class="tcard" id="t-start" data-title="START does nothing" data-k="start button not working nothing happens">
+      <div class="pic"><svg aria-hidden="true" style="color:var(--ok)"><use href="#i-play"/></svg></div>
+      <div><h3>START does nothing</h3>
+        <div class="do">
+          <div><svg aria-hidden="true"><use href="#i-check"/></svg><span>Is a stage light on? The room is already running.</span></div>
+          <div><svg aria-hidden="true"><use href="#i-check"/></svg><span>Are all lights blinking? Maintenance, see above.</span></div>
+          <div class="call"><svg aria-hidden="true"><use href="#i-person"/></svg><span>Still nothing: call the supervisor.</span></div>
+        </div>
+      </div>
+    </article>
+    <article class="tcard" id="t-probe" data-title="Red temperature / sensor out of range" data-k="red temperature sensor fault probe out of range alert">
+      <div class="pic"><svg aria-hidden="true" style="color:var(--stop)"><use href="#i-thermo"/></svg></div>
+      <div><h3>A temperature is red</h3>
+        <p>That probe gives a wrong reading. The room keeps running with the last good value.</p>
+        <div class="do">
+          <div><svg aria-hidden="true"><use href="#i-check"/></svg><span>Check the probe cable and that Tc is still in the fish.</span></div>
+          <div class="call"><svg aria-hidden="true"><use href="#i-person"/></svg><span>Tell the supervisor. Stage 2 may not end by itself.</span></div>
+        </div>
+      </div>
+    </article>
+    <figure><div class="shot"><img src="img/control-fault.jpg" alt="Control page with a red sensor fault warning" loading="lazy" width="1600" height="1105"></div>
+      <figcaption>A probe problem: a red message at the top and the value in red.</figcaption></figure>
+    <article class="tcard" id="t-long" data-title="Stage 2 never ends" data-k="stage 2 long never ends stuck">
+      <div class="pic"><span class="mini"><i></i><i style="background:var(--lamp-on)"></i><i></i></span></div>
+      <div><h3>Stage 2 takes too long</h3>
+        <p>On the web page, look at the ✕ / ✓ boxes: Stage 2 needs <b>both</b> Ts and Tc.</p>
+        <div class="do"><div class="call"><svg aria-hidden="true"><use href="#i-person"/></svg><span>A value that never moves can be a bad probe. Call the supervisor.</span></div></div>
+      </div>
+    </article>
+    <article class="tcard" id="t-offline" data-title="Page says Offline" data-k="offline web page can't reach wifi network">
+      <div class="pic"><svg aria-hidden="true" style="color:var(--muted)"><use href="#i-wifi"/></svg></div>
+      <div><h3>Web page says “Offline”</h3>
+        <p>The room still works. Only the page lost contact.</p>
+        <div class="do"><div><svg aria-hidden="true"><use href="#i-check"/></svg><span>Check your phone is on the plant Wi-Fi. The page retries by itself.</span></div></div>
+      </div>
+    </article>
+    <article class="tcard" id="t-power" data-title="Power cut" data-k="power cut restart blackout outage">
+      <div class="pic"><svg aria-hidden="true" style="color:var(--wait)"><use href="#i-power"/></svg></div>
+      <div><h3>After a power cut</h3>
+        <p>The room comes back in the same stage. Don't press START again.</p>
+        <div class="do"><div><svg aria-hidden="true"><use href="#i-check"/></svg><span>Check that the right light is on.</span></div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= 10 SHEET ================= -->
+<section id="sheet" data-title="Cheat sheet" data-k="cheat sheet summary print card">
+  <h2><span class="n">10</span>Cheat sheet</h2>
+  <div class="sheet">
+    <header><b>Thawing Room</b><span>Room: <span class="blank">&nbsp;</span> · Page: http://<span class="blank">&nbsp;</span>/control</span></header>
+    <div class="cols">
+      <div>
+        <h5>Buttons</h5>
+        <div class="row"><span class="k go">Start</span><span>Thaw now (Stage 2)</span></div>
+        <div class="row"><span class="k later">D-Start</span><span>Thaw later (Stage 1, then 2)</span></div>
+        <div class="row"><span class="k halt">Stop</span><span>Stage 3: finished · else: stopped</span></div>
+      </div>
+      <div>
+        <h5>Lights</h5>
+        <div class="row"><span class="mini"><i></i><i></i><i></i></span><span>Idle, ready</span></div>
+        <div class="row"><span class="mini"><i class="on"></i><i></i><i></i></span><span>Stage 1, waiting</span></div>
+        <div class="row"><span class="mini"><i></i><i class="on"></i><i></i></span><span>Stage 2, thawing</span></div>
+        <div class="row"><span class="mini"><i></i><i></i><i class="on"></i></span><span>Stage 3, press STOP when fish leaves</span></div>
+        <div class="row"><span class="mini"><i class="blink"></i><i class="blink"></i><i class="blink"></i></span><span>Maintenance, no start</span></div>
+      </div>
+      <div>
+        <h5>Remember</h5>
+        <div class="row"><svg class="i" aria-hidden="true" style="color:var(--ok);width:24px;height:24px"><use href="#i-check"/></svg><span>Tc probe inside a fish</span></div>
+        <div class="row"><svg class="i" aria-hidden="true" style="color:var(--ok);width:24px;height:24px"><use href="#i-check"/></svg><span>Power cut: it continues by itself</span></div>
+        <div class="row"><svg class="i" aria-hidden="true" style="color:var(--stop);width:24px;height:24px"><use href="#i-x"/></svg><span>Red temperature: call supervisor</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SUPERVISOR ================= -->
+<div class="supbanner" id="supervisor"><span class="eyebrow">From here on</span><h2>Supervisor only</h2><p>Lockdown, calibration and settings change how the room runs. Operators don't need these pages.</p></div>
+
+<section id="lockdown" data-title="Maintenance lockdown" data-k="maintenance lockdown lock repair blink mqtt maintenance_state">
+  <h2><span class="n">11</span>Maintenance lockdown</h2>
+  <p class="big">Turn it on before anyone works inside the room or the cabinet. Nobody can start a cycle until you turn it off.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>While it is on</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>START and D-START</td><td>Blocked from the panel, the SCADA and the web. Each try is written in Events.</td></tr>
+      <tr><td>STOP</td><td>Still works.</td></tr>
+      <tr><td>Stage lights</td><td>All 3 blink.</td></tr>
+      <tr><td>Power cut or restart</td><td>Stays on.</td></tr>
+      <tr><td>A cycle already running</td><td><b>Keeps running.</b> Press STOP if the work needs the room off.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="flip" data-flip>
+    <div class="stage-img">
+      <img src="img/control-run.jpg" alt="" data-cap="On the Control page, scroll down to Maintenance lockdown and press Enable lockdown.">
+      <img src="img/dlg-lock.jpg" alt="" data-cap="Confirm. If a cycle is running, the message reminds you it keeps running.">
+      <img src="img/control-lock.jpg" alt="" data-cap="A yellow banner shows who turned it on and when. Lift lockdown turns it off.">
+    </div>
+    <div class="bar"><button type="button" data-prev>◀ Back</button><button type="button" data-next>Next ▶</button><div class="dots"></div></div>
+    <p class="cap"></p>
+  </div>
+  <div class="note tip"><span>From the SCADA: publish <code>1</code> or <code>0</code> to the room's <code>maintenance</code> topic. The room answers on <code>maintenance_state</code>.</span></div>
+</section>
+
+<section id="calibration" data-title="Sensor calibration" data-k="calibration calibrate probe reference thermometer ice bath three point wizard undo factory">
+  <h2><span class="n">12</span>Sensor calibration</h2>
+  <p class="big">Corrects a probe against a thermometer you trust. Three baths, about 30 minutes per probe.</p>
+  <ol class="steps">
+    <li><div><b class="t">Stop the cycle and turn on the lockdown</b><span>Calibration only works in maintenance lockdown with the room idle.</span></div></li>
+    <li><div><b class="t">Open Settings → Sensor calibration</b><span>Press <b>Calibrate</b> next to the probe.</span></div></li>
+    <li><div><b class="t">Prepare 3 baths at least 5 °C apart</b><span>Good choices: ice water (0 °C, the most important), a cold bath near −18 °C, water at room temperature.</span></div></li>
+    <li><div><b class="t">For each bath: probe and thermometer together, wait for “Stable”</b><span>Type what the thermometer reads and press <b>Capture point</b>.</span></div></li>
+    <li><div><b class="t">Check the review and save</b><span>The new calibration works right away. <b>Undo last</b> brings the old one back.</span></div></li>
+  </ol>
+  <div class="flip" data-flip>
+    <div class="stage-img" style="aspect-ratio:1600/1477">
+      <img src="img/cal-overview.jpg" alt="" data-cap="Each probe shows its calibration and live reading. Press Calibrate.">
+      <img src="img/cal-point.jpg" alt="" data-cap="Wait for the green “Stable”, type the reference reading, press Capture point.">
+      <img src="img/cal-review.jpg" alt="" data-cap="Review: new curve against the old one, and how much each point changes. Save calibration.">
+    </div>
+    <div class="bar"><button type="button" data-prev>◀ Back</button><button type="button" data-next>Next ▶</button><div class="dots"></div></div>
+    <p class="cap"></p>
+  </div>
+  <div class="note warn"><span>Don't calibrate with the probe in the air or still warm from your hand. Both must sit in the bath, at the same depth, until the page says Stable.</span></div>
+  <div class="note info"><span>Calibration covers the whole chain: probe, transmitter, cable and the input module. That module ages, so recheck once a year or after replacing a probe.</span></div>
+</section>
+
+<section id="settings" data-title="Settings & restart" data-k="settings parameters config edit save restart reboot">
+  <h2><span class="n">13</span>Settings &amp; restart</h2>
+  <p class="big">Stage times and targets are in <b>Settings → Thawing parameters</b>. Network and SCADA settings are in <b>System settings</b>.</p>
+  <div class="two">
+    <figure>
+      <div class="shot"><img src="img/edit-saved.jpg" alt="Settings page showing which values were saved and a Restart now button" loading="lazy" width="1600" height="1309"></div>
+      <figcaption>After saving, the page lists exactly what changed. Edited fields are marked until you save.</figcaption>
+    </figure>
+    <div style="display:grid;gap:12px;align-content:start">
+      <div class="note info"><span>These files are read when the controller starts. Saved values apply after a <b>restart</b>: press <b>Restart now</b>, or let it happen at the next power cycle.</span></div>
+      <div class="note tip"><span>A restart during a cycle is safe: the room comes back in the same stage. The page waits and says <b>Back online</b>.</span></div>
+      <div class="note warn"><span>Don't change Wi-Fi or the IP address unless you are at the plant. A typo can make the room unreachable from the office.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="firmware" data-title="Firmware update" data-k="firmware update bin upload device version">
+  <h2><span class="n">14</span>Firmware update</h2>
+  <ol class="steps">
+    <li><div><b class="t">Open the Device page</b><span>Choose the <code>.bin</code> file under <b>Firmware update</b>.</span></div></li>
+    <li><div><b class="t">Press Update firmware and wait</b><span>The bar fills, the room restarts, and the page says <b>Back online on the new firmware</b>.</span></div></li>
+    <li><div><b class="t">Check the version</b><span>Bottom-left of every page, for example <code>cfpp1 · v1.0.2</code>.</span></div></li>
+  </ol>
+  <figure>
+    <div class="shot"><img src="img/device.jpg" alt="Device page with firmware update, configuration file and restart" loading="lazy" width="1600" height="1018"></div>
+    <figcaption>One firmware file serves all 9 rooms. Each room keeps its own settings and calibration.</figcaption>
+  </figure>
+  <div class="note warn"><span>Don't update during a cycle you can't afford to pause. The room resumes after the restart, but it is off for about a minute.</span></div>
+</section>
+
+</div>
+</main>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  // ---------- light simulator ----------
+  var MEANING = {
+    '0': ['i-checkc', 'var(--ok)', 'Idle', 'Ready. Press START or D-START.', ''],
+    '1': ['i-clock', '#6d9fd0', 'Stage 1 · Waiting', 'The room waits for the set time, then goes to Stage 2 by itself.', ''],
+    '2': ['i-fan', 'var(--accent)', 'Stage 2 · Thawing', 'Fans, air and sprinkler run. Goes to Stage 3 by itself.', ''],
+    '3': ['i-thermo', 'var(--ok)', 'Stage 3 · Holding', 'Fish is ready. Press STOP when it leaves the room.', ''],
+    'L': ['i-wrench', 'var(--signal)', 'Maintenance', 'Someone is working on the room. Nothing can start. Ask the supervisor.', 'lock']
+  };
+  function showPattern(p) {
+    $$('#panelSvg .lamp').forEach(function (g) {
+      var n = g.getAttribute('data-lamp');
+      g.classList.toggle('on', p === n);
+      g.classList.toggle('blink', p === 'L');
+    });
+    $$('.lights button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === p ? 'true' : 'false'); });
+    var m = MEANING[p], el = $('#meaning');
+    el.className = 'meaning' + (m[4] ? ' ' + m[4] : '');
+    el.innerHTML = '<svg aria-hidden="true" style="color:' + m[1] + '"><use href="#' + m[0] + '"/></svg><div><b>' + m[2] + '</b><span>' + m[3] + '</span></div>';
+  }
+  $$('.lights button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      showPattern(b.getAttribute('data-p'));
+      var r = $('#panelSvg').getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) $('#panel .panelwrap').scrollIntoView({ block: 'center' });
+    });
+  });
+  showPattern('2');
+
+  // ---------- flipbooks ----------
+  $$('[data-flip]').forEach(function (f) {
+    var imgs = $$('img', f), cap = $('.cap', f), dots = $('.dots', f), i = 0;
+    imgs.forEach(function (_, k) { var s = document.createElement('span'); dots.appendChild(s); });
+    function show(n) {
+      i = (n + imgs.length) % imgs.length;
+      imgs.forEach(function (im, k) { im.classList.toggle('on', k === i); });
+      $$('span', dots).forEach(function (d, k) { d.classList.toggle('on', k === i); });
+      cap.innerHTML = '<b>' + (i + 1) + '/' + imgs.length + '</b>' + imgs[i].getAttribute('data-cap');
+    }
+    $('[data-prev]', f).addEventListener('click', function () { show(i - 1); });
+    $('[data-next]', f).addEventListener('click', function () { show(i + 1); });
+    show(0);
+  });
+
+  // ---------- index highlight ----------
+  var links = $$('#toc a');
+  var secs = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+  function onScroll() {
+    var y = window.innerHeight * 0.3, cur = null;
+    secs.forEach(function (s) { if (s.getBoundingClientRect().top <= y) cur = s.id; });
+    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + cur); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- phone drawer ----------
+  var side = $('#side'), menuBtn = $('#menuBtn');
+  function menu(open) { document.body.classList.toggle('menu', open); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  menuBtn.addEventListener('click', function () { menu(!document.body.classList.contains('menu')); });
+  $('#searchBtn').addEventListener('click', function () { menu(true); setTimeout(function () { $('#q').focus(); }, 150); });
+  side.addEventListener('click', function (e) { if (e.target.closest('a')) menu(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') menu(false);
+    if (e.key === '/' && document.activeElement !== $('#q')) { e.preventDefault(); menu(true); $('#q').focus(); }
+  });
+
+  // ---------- search ----------
+  var items = $$('[data-title]').map(function (el) {
+    return { el: el, title: el.getAttribute('data-title'), text: (el.getAttribute('data-k') || '') + ' ' + el.textContent.replace(/\s+/g, ' ') };
+  });
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function snippet(text, q) {
+    var i = text.toLowerCase().indexOf(q); if (i < 0) return '';
+    var s = Math.max(0, i - 40), part = text.slice(s, i + q.length + 60);
+    return (s ? '…' : '') + esc(part).replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), function (m) { return '<mark>' + m + '</mark>'; }) + '…';
+  }
+  $('#q').addEventListener('input', function () {
+    var q = this.value.trim().toLowerCase(), box = $('#results');
+    side.classList.toggle('searching', !!q);
+    box.hidden = !q;
+    if (!q) return;
+    var hits = items.filter(function (it) { return it.text.toLowerCase().indexOf(q) >= 0 || it.title.toLowerCase().indexOf(q) >= 0; }).slice(0, 12);
+    box.innerHTML = hits.length
+      ? '<div class="count">' + hits.length + ' found</div>' + hits.map(function (it, k) {
+          return '<a href="#' + (it.el.id || '') + '" data-i="' + items.indexOf(it) + '"><span class="what">' + esc(it.title) + '</span><span class="snip">' + snippet(it.text, q) + '</span></a>';
+        }).join('')
+      : '<div class="none">Nothing found. Try another word, like “stop” or “light”.</div>';
+  });
+  $('#results').addEventListener('click', function (e) {
+    var a = e.target.closest('a'); if (!a) return;
+    e.preventDefault();
+    var el = items[+a.getAttribute('data-i')].el;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit');
+    menu(false);
+  });
+})();
+</script>
+
+</body>
+</html>
